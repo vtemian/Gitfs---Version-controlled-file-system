@@ -1,0 +1,48 @@
+
+\chapter{Introduction}
+
+Gitfs is a version controlled FUSE file system, based on git. This project is open source and developed under the Apache License by Vlad Temian while under the employment of Presslabs, a web hosting company, focused on Wordpress hosting for publishers. In order to make life easier for the non-technical users, I, along with my coworkers, have developed a filesystem which can manage unversioned code in a versioned manner.
+
+\section{Problem Statement}
+
+For many years, creating versioned content for the basic and non-technical users has been painful. For people working in fields such as professional writing, photography and so on, sharing files with different people or even working on them in a distribute manner, was almost an impossible mission even with technical background.
+
+These days, in order to make versioned content, you need to be very disciplined and you need to save a different version of the file in a different location, using unique names for each and every change. In order to distribute the content, you need to use a file sharing application (for example Dropbox, Google Drive or Amazon S3), but these come without any merging or reconciliation mechanisms. 
+
+If two different people want to edit the same file, one option would be that they distribute it on a common storage device (physical or cloud related). The downside of this solution is that the only file version which will be visible on the storage device will be just the one that was last distributed.
+
+Another way to approach this problem would by using external, online tools, such as Google Docs or Adobe Creative Cloud, in order to keep track and sync your work. But these also come at a price, literally and figuratively, some or most of them being commercial only, painful to setup and only supporting certain types of content.
+
+\section{Solution}
+The easiest way to solve this problem is to let the filesystem do all the work.
+
+In order to better explain how this works I will give you a more concrete example of our solution. We will be using two different directories: one for the current representation of the content (which will be named 'current') and one for different representation of the content at certain points in time (we'll call it 'history'), in chronological order. Each write operation will be transformed in a version of the file, adding some information about the change (who made the change, when was the change made and a short message describing what was changed).
+
+After all write operations are finished, the filesystem can push all of these changes to a remote location. From that location, other filesystem instances can pull those changes at a fixed or variant period of time. In case of any conflicts, the filesystem will apply a common merging strategy, like always accepting local changes. By using this strategy, the user has the guarantee that the conflict or conflicts will be, eventually, solved.
+
+\subsection{Project description}
+We can split the building blocks of the solution into two main parts: one part which can handle all the versioning problems and another part which will allow us to easily built a fully flagged filesystem with good concurrency support.
+
+For the versioning part, we have adopted git's philosophy. All writes are grouped and combined together in a single unit of work called commit. Besides content, a commit also contains some meta-data like who created the content, when was the content created or when were the changes made and a short message describing these changes. In order to be very efficient and to be able to manipulate the git objects at the lowest level possible, all this while using a small memory footprint, we've chosen libgit2, a library that implements all of git's internal representation and its versionned content managing systems. Libgit2 has bindings in all modern high level languages, including Python. So, to have a simple, easy and maintainable implementation, we used pygit2, which provides all the bindings from libgit2 in Python.
+
+For the filesystem part we didn't want to write any kernel code and we wanted to use a high level language, with decent concurrency support. These are the reasons for which we have choosen FUSE. FUSE stands for 'filesystem in userspace' which is an interface that lets you build a filesytem, wihtout any kernel hacking. This interface is implemented by libfuse, a library written in C that has bindings in any of the major high level languages. The Python implementation of those bindings is called fusepy.
+
+In order to solve any raising conflicts and group all the changes together we need a solid concurrency model. On one side we have the FUSE filesystem which can spawn multiple threads, one for each of its operations (basically for each system call). We will call these dummy workers. All the write operations need to be registered somewhere and aggregated in a single commit. You don't want to have a commit for each write operation, because when you extract a big archive, containing a lot of files, in the current directory, you can get tons of commits, for every single file. In order to aggregate all the changes, we'll be using a queue shared among all those FUSE threads and a special worker, called the SyncWorker, who has the job to synchronize the local changes with the remote ones. Another important part of the synchronization is to periodically get the changes form the remote repository. This will be achieved by using the FetchWorker, whose job is to bring the changes locally and to notify the SyncWorker in case there are any conflicts that need to be solved.
+
+By combining those parts we ended up with Gitfs, a fully flaged POSIX filesystem that behaves like a wrapper over a git repository.
+
+\subsection{General usage}
+In order to use it, you'll need an UNIX like operating system (Linux, FreeBSD, macOS etc), a bare git repository (there are lots of 3rd party services like Github and Bitbucket which offer you free git repository, or you can create one using the git commands) and gitfs which can be installed from source or from one of our repositories.
+
+After one mounted the filesytem, using the mount command or by running the binary (see Usage for more details), two directories are found: current and history. (Dointia, ma gandesc ca ar trebui combinate astea dar nu stiu cum) Once mounted, one can open any content editor(for text, music, graphic or code related) and start edit your work. Any changes in the current directory is made, it will be found in history directory, into a new sub-directory (named using a chronological convention: year-month-day-hour:minute). All the changes, across multiple gitfs or git instances, are automatically synced, in the background and any conflict is solved without manual intervention.
+
+Those feature makes gitfs an ideal tool for non technical users to create distributed versioned content.
+
+\subsection{Presslabs specific usecase}
+For Presslabs' users, a major problem is to manage the code in a versioned manner. A lot of people who uses Presslabs' hosting services are not tehnical nor do they have a development team which is familiar with any versioning control systems. This could lead to very complicated ways to solve problems in critical situations. For example, when a user made a code change on the live, running website, and introduced a fatal error. It may not be so obvious to restore the website at a certain point in time. You would need to heavily rely on code backups and fast restores.
+
+In order to simply the process, we created an environment in which any code changes are versionned, using git. It is composed by a central server with git repositories (highly available, with replications using mirroring, in two separated datacenters), gitfs for sftp server and each website with a Wordpress plugin that tracks and manage any changes.
+
+When a change occures on sftp server, gitfs will track it and push it to the git server (named git.presslabs.net). The server will notify the corresponding website associated to the change, so the website knows that it needs to update the code. This process can work both ways, from sftp to website and from website to sftp. When somebody makes change to a website (installs a plugin, theme or edit a css file), the plugin will track the changes, push them to git.presslabs.net and from there, gitfs will fetch it to the sftp server. In case of any conflicts gitfs and gitium will use 'always-accept-local-changes' strategy, in order to solve them. More details about this strategy can be found later in this paper.
+
+The advantages of using such a setup is that a developer, who knows to use git, can very easily collaborate with not-technical sites administrators. Using git, anybody, with SSH access to the git.presslabs.net server, can push git commits and those changes will end up on SFTP and the given website.

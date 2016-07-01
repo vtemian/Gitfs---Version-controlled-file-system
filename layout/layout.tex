@@ -1,0 +1,20 @@
+\chapter{Filesystem Layout}
+
+\label{ch:fslayout}
+
+\section{Structure}
+
+Gitfs will present your content through two directories: current and history. In current directory you will have the current state of your content (images, text, documents, directories etc.). Here, all you're changes will became one commit in your git repository and will get synchronized with the remote. The second directory it's history, a pretty intuitive name. There you'll find your visioned content. This directory contains n other directories, one for each day you did any change, and those directories will contain m other directories, one for each change in that day. So, in the end, you will end up with n*k (1<k<m) directories, each one of them representing a state in which you content was at a certain time.
+
+\section{Behaviour}
+
+Whenever you will change something in the current directory a commit job will be trigger. Eventually, the job will finish with a commit, and after certain commits were made, they will be pushed to a remote repository. In this way you can be synchronized  with other people whom are working on the same content.
+
+If one of your collaborators already pushed something on the remote, before your pushing, gitfs will try to merge your changes, with the remote one, and in case of conflict, you're changes will have priority. This mechanism it's called: merging with accept mine strategy. Gitfs it's a expendable system and you can implement and use your own merging strategy.
+
+Also, in background, a fetch worker it's fetching changes all the time, at a certain period. If somebody changed something and pushed to the remote repository, you will be able to see those changes in a short period of time.
+
+\section{Special Cases}
+If any of any synchronization mechanisms fail (merging, pushing or fetching), the filesystem will enter into a read-only mode, in which you will no be able to do any changes your content until you manually solve those conflicts. This is mechanism it's a safety measure in order to prevent inconsistent states multiple and different across changes.
+
+Another safety mechanism it's an idle mode for fetching. When you don't have any activity on your content for mode then 30 minutes, gitfs will gradually deacrease the amount of time between automatically fetching. This mode prevents staturation of ssh connection on the remote server. 

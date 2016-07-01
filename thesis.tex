@@ -1,0 +1,41 @@
+
+\documentclass[a4paper,12pt,twoside]{report}
+\usepackage[left=2.5cm,right=2.5cm,top=2.5cm,bottom=2.5cm]{geometry}
+
+\include{thesis.preamble}
+
+
+\begin{document}
+
+\title{\LARGE {\bf Gitfs - Version controlled file system }\\
+ \vspace*{4mm}
+}
+
+\author{Vlad Temian}
+\submitdate{July 2016}
+
+\onehalfspacing
+\maketitle
+
+\preface
+\input{abstract/abstract}
+\input{acknowledgements/acknowledgements}
+\input{quotes/quotes}
+
+\body
+\input{introduction/introduction}
+\input{theoretical/theoretical}
+\input{layout/layout}
+\input{concurrency/concurrency}
+
+\input{conclusion/conclusion}
+
+\appendix
+% appendices come here
+
+
+\addcontentsline{toc}{chapter}{Bibliography}
+\bibliographystyle{alpha}
+\bibliography{bibliography/bibliography}
+
+\end{document}
