@@ -2,44 +2,6 @@
 
 \label{ch:concurrencymodel}
 
-\section{Arhitecture}
-   We can think of gitfs as a service which will respond to some requests. For example, one can make a request to see the current state of one file from a certain directory. This can be translated to a syscall and a parameter attached to it: READ (/current/myfile.txt). We can easily imagine as web requests to some restful resources. In order to server those resources, in modern web arhiecture we need a Router and some Views.
-   
-   Inspired by this paradigm found in many modern web frameworks (Django it's one of the biggest webframework written fully in Python), gitfs has a very simple arhitecture.
-   
-   \begin{figure}[h]
-      \begin{center}
-        \includegraphics[width=5cm]{concurrency/views-gitfs.png}
-      \end{center}
-   \end{figure}
-   
-\section{Views}
-In our diagram we can found the Router class which is used in order to dispatch paths to different Views.
-Views are used to offer different functionality depending on your current path.
-They are divided into two super classes:
-
-\begin{itemize}
-    \item PassthroughView - will work just like you would expect a normal directory to. It’s purpose is to map all of FUSE‘s operations to the similar ones in Python.
-    
-    \item ReadOnlyView - is used when user writes are not desired
-\end{itemize}
-
-The subclasses of these are:
-
-\begin{itemize}
-    \item PassthroughView
-    \begin{itemize}
-        \item CurrentView – this is the view which handles the current directory and does the automated commits and pushes
-    \end{itemize}
-    
-    \item ReadOnlyView
-    \begin{itemize}
-        \item HistoryView – this is the view which handles the history directory and categorizes commits by date
-        \item CommitView – this is the view which handles the history/*day* directory
-        \item IndexView – this is the view which handles the history/*day*/*commit* directory and shows you a read-only snapshot pointing to that commit
-    \end{itemize}
-\end{itemize}
-
 \section{Workers}
     All workers inherit the Peasant class which is nothing more than a specialized Thread.
 
@@ -51,7 +13,7 @@ The subclasses of these are:
     
     \begin{figure}[h]
       \begin{center}
-        \includegraphics[width=15cm]{concurrency/gitfs.png}
+        \includegraphics[width=16cm]{concurrency/gitfs.png}
       \end{center}
    \end{figure}
 \section{Merging}

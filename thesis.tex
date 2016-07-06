@@ -3,6 +3,11 @@
 \usepackage[left=2.5cm,right=2.5cm,top=2.5cm,bottom=2.5cm]{geometry}
 
 \include{thesis.preamble}
+\usepackage{ifplatform}
+\ifxetex
+    \usepackage{fontspec} 
+    \setmainfont{Palatino Linotype}
+\fi
 
 
 \begin{document}
