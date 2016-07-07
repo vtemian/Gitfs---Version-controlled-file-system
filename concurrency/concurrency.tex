@@ -2,20 +2,6 @@
 
 \label{ch:concurrencymodel}
 
-\section{Workers}
-    All workers inherit the Peasant class which is nothing more than a specialized Thread.
-
-    Here are the workers with their more than explicit names:
-    \begin{itemize}
-        \item FetchWorker - will update your local repository with any changes that appeared on the remote on. Every 5 seconds, will block the SyncWorker, in order to perform the fetch operations. If it successfully retrieved data form the remote repository, will announce the SyncWorker that it has some changes that needed to be merge.
-        \item SyncWorker - it responsible with commit creation, merging local changes with the remote ones and push those changes to other repository. If any of this operations fail, the filesystem will be locked into a read-only state.
-    \end{itemize}
-    
-    \begin{figure}[h]
-      \begin{center}
-        \includegraphics[width=16cm]{concurrency/gitfs.png}
-      \end{center}
-   \end{figure}
 \section{Merging}
 \section{Options}
 In order to use options when mounting gitfs, you need to append the options as an argument when using the mount command like this: -o option1=value1,option2=value2,option3=value3...
