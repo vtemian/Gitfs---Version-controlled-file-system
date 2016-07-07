@@ -22,45 +22,45 @@ The current and history directories are virtual directories which do not exists 
 \section{Views}
 In order to better explain how Gitfs manages the content in those directories and the file system's operations, we can make a parallel example with how a HTTP service handles the requests. 
 
-The entire file system layout can be translated into URLs. Each path in the file system can be viewed as an URL, being part of an HTTP service. When a request is made on a certain URL, a handler will be trigger and a response will be returned. The request can be made with different HTTP (Hypertext Transfer Protocol) methods: GET, POST, PUT, DELETE etc \cite{Fielding1999}. For each of those methods the request handler can respond with different content. When a client requests the content from a certain URL it will use GET. When he wants to change it, it usually uses POST, but in order to differentiate the type of the change, other methods can be used (PUT, DELETE or PATCH). The request handler can act like a proxy and send it to other parts of the application. These get to do the actual work and after which they return a response to the request handler which will returned it back to the client.
+The entire file system layout can be translated into URLs. Each path in the file system can be viewed as an URL, being part of an HTTP service. When a request is made on a certain URL, a handler will be trigger and a response will be returned. The request can be made with different HTTP (Hypertext Transfer Protocol) methods: GET, POST, PUT, DELETE etc \cite{Fielding1999}. For each of those methods the request handler can respond with different content. When a client requests the content from a certain URL it will use GET. When he wants to change it, it usually uses POST, but in order to differentiate the type of the change, other methods can be used (PUT, DELETE or PATCH). The request handler can act like a proxy and send it to other parts of the application. These get to do the actual work and return a response to the request handler which will return it back to the client.
 
-Those parts of the application which implement the business logic are usually called controllers, in a MVC (Model View Controller) framework \cite{Deacon2009}. Other parts from a MVC framework are: Model (contains logic which deals with data manipulation) and Views (those components are what the client actually see). Traditionally, the Controller serves as a proxy for data, from Model to View. In a modern MVC architecture the business logic can be placed in an intermediary layer, between Models and Controllers, or directly in Models. Having multiple controllers, the request handler needs to decide which controller to instantiate and use, for which URL. A solution to this problem will be to route the request using some predefined routing rules. Those rules can be described using regular expressions. Because the of a request handler is to route the request to a controller, we'll be calling it Router.
-
-In figure ~\ref{fig:routing} can be observed the routing mechanism in a web MVC framework.
+Those parts of the application which implement the business logic are usually called controllers, in a MVC (Model View Controller) framework \cite{Deacon2009}. Other parts from a MVC framework are: Model (contains logic which deals with data manipulation) and Views (those components are what the client actually see). Traditionally, the Controller serves as a proxy for data, from Model to View. In a modern MVC architecture the business logic can be placed in an intermediary layer, between Models and Controllers, or directly in Models. Having multiple controllers, the request handler needs to decide which controller to instantiate and use, for which URL. A solution to this problem will be to route the request using some predefined routing rules. Those rules can be described using regular expressions. Because the job of a request handler is to route the request to a controller, we'll be calling it Router.
 
 \begin{figure}[h]
   \begin{center}
     \includegraphics[width=15cm]{layout/mvc.png}
     \caption{Http routing in a MVC framework.}
-    \label{fig:routing}
+    \label{fig:mvc}
   \end{center}
 \end{figure}
 
-As one can observe, this behave can applied very easily to a FUSE based file system. In order to develop a FUSE file system one needs to implement an interface which represents the set of operations which can be performed on that file system. To be more specific, fusepy offers you a base class, called 'Operations', which acts like an interface (but in Python, being weakly type, it doesn't provide the concept of interfaces). You need to inherit from that class and implement a set of methods which represents the set of operations supported by the file system (read, write, open, close, mkdir etc.).
+In figure ~\ref{fig:mvc} the routing mechanism in a web MVC framework can be observed.
 
-Because all those method will have a pathname as argument, we can use the model described earlier, inspired by the MVC pattern. The paths to different files or directories can be viewed as URLs and a performing operation as an HTTP request. We can implement different controllers, for different paths and use a router to route a certain operation to a controller.
+As one can observe, this behaviour can be applied very easily to a FUSE based file system. In order to develop a FUSE file system one needs to implement an interface that represents the set of operations which can be performed on that file system. To be more specific, fusepy offers you a base class, called 'Operations', that acts like an interface (but in Python, being weakly typed, it doesn't provide the concept of interfaces). You need to inherit from that class and implement a set of methods that represent the set of operations supported by a file system (read, write, open, close, mkdir etc.).
 
-This idea came originally from Django (a popular Pyhon based web framework \cite{Django}) which implements a variation of MVC called MVT (Model-View-Template). In this pattern, the View actually represents the controller and the Template will be the View (a little bit confusing). That's why, in this implementation, the Views are actually Controllers.
+Because all of those methods will have a pathname as on of the arguments, we can use the model described earlier, inspired by the MVC pattern. The paths to different files or directories can be viewed as URLs and the operation as an HTTP request. We can implement different controllers for different paths and use a router to route a certain operation to a controller.
 
-For each directory from the mount point we implemented a series of views: CommitView, HistoryView, IndexView and CurrentView. In order to reuse common logic we used two classes:
+This idea came originally from Django (a popular Python based web framework \cite{Django}) which implements a variation of MVC called MVT (Model-View-Template). In this pattern, the View actually represents the controller and the Template will be the View (a little bit confusing). That's why, in our implementation, the Views are actually Controllers.
+
+For each directory from the mount point we have implemented a series of views: CommitView, HistoryView, IndexView and CurrentView. In order to reuse the common logic of those views, we have created two classes:
 
 \begin{itemize}
-    \item PassthroughView - a view which doesn't change the behaviour of the file system. It's implemented as a blind proxy to the actual kernel file system, by calling, for each operation, the corresponding system call.
-    \item ReadOnlyView - used to restrict the access to any write operation. If a user space application will want to invoke a write operation, an EROFS \cite{erofs} will be raised.
+    \item PassthroughView - a view that doesn't change the behaviour of the file system. It's implemented as a blind proxy to the actual kernel file system by calling, for each operation, the corresponding system call.
+    \item ReadOnlyView - used to restrict the access to any write operation. If a user space application wants to invoke a write operation, an EROFS \cite{erofs} will be raised.
 \end{itemize}
 
-Those views are inherited by the actual, user facing, views:
+Those views are inherited by the actual user facing views:
 \begin{itemize}
     \item PassthroughView
     \begin{itemize}
-        \item CurrentView – is the view which handles the current directory. It is a PassthroughView meaning that all operations will be executed by an individual file system, without changing the outcome. This view is also responsible for managing the changes and initiate the commit process.
+        \item CurrentView – is the view that handles the current directory. It is a PassthroughView meaning that all operations will be executed by an individual file system, without changing the outcome. This view is also responsible for managing the changes and initiate the commit process.
     \end{itemize}
     
     \item ReadOnlyView
     \begin{itemize}
-        \item HistoryView – view which handles the history directory and group commits by day. Also, it handles the history/{day} directories. Using the git objects from previously cloned repository, it can retrieve when changes occured and using a hashmap it can group them by day.
-        \item CommitView – is the view which handles the history/*day*/*commit* directories. In a such give directory is represented a snapshot of the repository, when a certain change was made, in a certain day. This behaviour can be used to retrieve content, from an earlier version, but in a more tangible why, without to use any commands. CommitView is read-only because you are not allowed to change the history. In order to restore a file to an older state you need to copy it from one of those kind of directories and put it in the current directory.
-        \item IndexView – is the view which handles the directory represented as mount point. It's responsible only by current and history directory and doesn't implement any custom logic.
+        \item HistoryView – view which handles the history directory and group commits by day. Also, it handles the history/{day} directories. Using the git objects from the previously cloned repository, it can retrieve commits and, using a hashmap, it will group them by day.
+        \item CommitView – is the view which handles the history/{day}/{commit} directories. In a such form, a given directory represents a snapshot of the repository, when a certain change was made, in a certain day. This kind of structure is used to retrieve content, from an earlier version. It does that in a more tangible way, without the help of any commands. CommitView is read-only because you are not allowed to change the history. In order to restore a file to an older state, you need to copy it from one of those kind of directories and put it in the current directory.
+        \item IndexView – is the view which handles the directory that represents the mount point. It's responsible only by current and history directory and doesn't implement any custom logic.
     \end{itemize}
 \end{itemize}
 
