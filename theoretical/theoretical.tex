@@ -17,9 +17,11 @@ In the next part of the paper we will talk a bit more about the technologies and
            \begin{center}
                \includegraphics[width=15cm]{theoretical/filesystem-arhitecture.png}
             \end{center}
+            \caption{High level architecture of a file system \cite{FSA}}
+            \label{fig:filesystem}
         \end{figure}
 
-        As you can see in this figure, an important part of a file system architecture stays in the kernel space. There, the Virtual File System (VFS) behaves as an interface for other file systems. It behaves like a gateway between system call interface and individual file systems, with some caches. It does that by exposing a series of interfaces to individual file systems, optimizing using two caches: dentries (directory cache) and inode. Each one of those caches stores the recently-used objects (implementing a LRU cache mechanism).
+        As you can see in figure ~\ref{fig:filesystem}, an important part of a file system architecture stays in the kernel space. There, the Virtual File System (VFS) behaves as an interface for other file systems. It behaves like a gateway between system call interface and individual file systems, with some caches. It does that by exposing a series of interfaces to individual file systems, optimizing using two caches: dentries (directory cache) and inode. Each one of those caches stores the recently-used objects (implementing a LRU cache mechanism).
         
         A kernel space implemented file system won't interact with a device directly. All write and read operations are passed through a cache, called a buffer cache. This is a very smart mechanism that offers a big performance boost, but with a cost. If you use the system call interface in order to write something in a file, that write is not atomic, meaning that if you close the file, the bits that you are writing are not on the storage device, but in this buffer cache. The kernel will flush periodically this cache on the device, but also can control the flushing using fsync system call, after you close the file. The buffer cache will use a LRU (Least Recently Used) cache which means that is a finite small cache that will store the most recent data, being optimized for use cases when you use the same data. 
         
@@ -43,9 +45,11 @@ In the next part of the paper we will talk a bit more about the technologies and
            \begin{center}
                \includegraphics[width=15cm]{theoretical/fuse.png}
             \end{center}
+            \caption{System call flow in FUSE \cite{FuseArch}}
+            \label{fig:fuse}
         \end{figure}
          
-        Let's take read operation as an example. Let's imagine that the directory /fuse is the FUSE mountpoint. When an application will call the read() syscall with /fuse/file as the path argument, the Virtual File System will trigger the corresponding handler in fusefs. A cache is used in order to optimize the operations flow. If the corresponding data is found in the cache it will be returned. Otherwise, the read() syscall will be forwarded to the libfuse library, which will call the callback defined in userfs for the read() syscall. The callback can make any action and return any data in the supplied buffer. With this mechanism one can implement any desired logic. For example, you can access Facebook's API in order to retrieve some photos, or to get data from an external storage device, or to do some processing from a local file system. After you've finished your work, the result is propagated to libfuse, through kernel and to the actual application which triggered the read() syscall. All file system operations can be implemented in the same manner.
+        Let's take read operation as an example, detalied in ~\ref{fig:fuse}. Let's imagine that the directory /fuse is the FUSE mountpoint. When an application will call the read() syscall with /fuse/file as the path argument, the Virtual File System will trigger the corresponding handler in fusefs. A cache is used in order to optimize the operations flow. If the corresponding data is found in the cache it will be returned. Otherwise, the read() syscall will be forwarded to the libfuse library, which will call the callback defined in userfs for the read() syscall. The callback can make any action and return any data in the supplied buffer. With this mechanism one can implement any desired logic. For example, you can access Facebook's API in order to retrieve some photos, or to get data from an external storage device, or to do some processing from a local file system. After you've finished your work, the result is propagated to libfuse, through kernel and to the actual application which triggered the read() syscall. All file system operations can be implemented in the same manner.
         
         In order to allow non privileged users to mount the file systems, the fusermount utility was created. It also offers the possibility to customize several parameters when one mounts a file system.
         
@@ -78,10 +82,10 @@ In the next part of the paper we will talk a bit more about the technologies and
         
         \begin{figure}[h]
            \begin{center}
-               \includegraphics[width=15cm, height=8cm]{theoretical/git_flow.png}
+               \includegraphics[width=15cm]{theoretical/git_flow.png}
             \end{center}
             \label{fig:git-flow}
-            \caption{Git's chain of commits}
+            \caption{Git's chain of commits \cite{Commits}}
         \end{figure}
         
         From a commit two branches can diverge, as showed in figure ~\ref{fig:git-flow}. If you want to bring commits from another branch to a given current branch, you can do that by using one of two methods: rebasing or merging. 
@@ -116,7 +120,7 @@ In the next part of the paper we will talk a bit more about the technologies and
            \begin{center}
                \includegraphics[width=15cm]{theoretical/data-model-2.png}
             \end{center}
-            \label{fig:git-objects}\caption{Git data model}
+            \label{fig:git-objects}\caption{Git data model \cite{GOBJ}}
         \end{figure}
         
         As one can observe, by using this mechanism a tree is formed for the current state of the repository (and it will be used to compose other version of the repository). This tree data structure is based on Merkle tree, a type of tree in which all the nodes are uniquely identified by a hash, except the leafs. This data structure is very efficient for lookup operations, which can be done in O(logn) time. In this kind of tree, if a node's hash is changed, all the nodes up to the root need to update their hashes. In this way, git will create a new tree for each commit you create, but in that tree, the nodes that were not changed, will be reused.
@@ -127,7 +131,7 @@ In the next part of the paper we will talk a bit more about the technologies and
            \begin{center}
                \includegraphics[width=15cm]{theoretical/data-model-3.png}
             \end{center}
-            \label{fig:git-objects}\caption{Git's objects and their relations}
+            \label{fig:git-objects}\caption{Git's objects and their relations \cite{GDM}}
         \end{figure}
     
 \section{Python}
