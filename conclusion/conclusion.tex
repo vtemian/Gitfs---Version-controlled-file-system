@@ -23,7 +23,7 @@ This file system was presented in multiple countries, within different conferenc
 
 Even if the project is mature, a lot of improvements can be made:
 \begin{itemize}
-    \item Refactor concurrency model to use a MPI (Message Passing Interface) in order to reduce the locks needed.
+    \item Refactor the concurrency model to use fewer locks between threads and communicate more using queues. Right now, there are more than 10 locks, in order to ensure that everything is running correctly, which translates to unmaintenable code.
     \item Decouple the synchronization mechanism from the file system part.
     \item Reuse the synchronization mechanism with different frontend (instead of file system).
     \item Follow multiple branches and remotes.

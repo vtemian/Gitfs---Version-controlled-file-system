@@ -13,7 +13,8 @@ In current directory the current state of the content is just a mirror for the c
 
 \begin{figure}[h]
   \begin{center}
-    \includegraphics[width=10cm]{layout/gitfs_layout.png}
+    \def\svgwidth{\columnwidth}
+    \input{layout/gitfs_layout.pdf_tex}
   \end{center}
 \end{figure}
 
@@ -68,7 +69,8 @@ All those views inherit from a base class called View. The View class has the pu
 
 \begin{figure}[h]
   \begin{center}
-    \includegraphics[width=15cm]{concurrency/views-gitfs.png}
+    \def\svgwidth{\columnwidth}
+    \input{layout/views.pdf_tex}
   \end{center}
   \caption{Views class diagram}
   \label{fig:views_diagram}
@@ -86,7 +88,8 @@ Once the view is obtain, the Router will call the specific method which correspo
 
 \begin{figure}[h]
   \begin{center}
-    \includegraphics[width=15cm]{layout/router.png}
+    \def\svgwidth{\columnwidth}
+    \input{layout/router.pdf_tex}
   \end{center}
   \caption{Operation call flow}
   \label{fig:routing}
@@ -99,7 +102,7 @@ A common behaviour is to access the history directory, in order to see the conte
 \section{Concurrency model and behaviour}
 In order to offer a better overview of the synchronization mechanism, a presentation of the actual concurrency model is required.
 
-As we have discussed earlier in this paper, FUSE will spawn, for each operation, a thread. This is very useful because a user can open multiple files in the same time or write onto multiple files in the same time. Another reason would be that it makes the synchronization problem much easier to solve, given the fact that those threads share the same memory. In this situation, we can share between all the threads managed by FUSE, data structures which can lock different tasks or pass information between threads.
+As we have discussed earlier in this paper, FUSE will spawn, for each operation, a thread. This is very useful because the user can open multiple files in the same time or write onto multiple files in the same time. Another reason would be that it makes the synchronization problem much easier to solve, given the fact that those threads share the same memory. In this situation, we can share between all the threads managed by FUSE, data structures which can lock different tasks or pass information between threads.
 
 Another interesting fact is that a FUSE based file system is a self contain process, running in user space. After the file system was mounted, a process was spawned, representing the entire application. This means, that beside the FUSE threads which share the same memory, each thread spawned by this process will share the same memory between them and between the FUSE threads' memory. Because of that, the synchronization mechanism can be decoupled by the views and router.
 
@@ -113,7 +116,7 @@ All workers inherit the Peasant class which is nothing more than a specialized T
 
 Between the SyncWorker and FUSE threads are shared multiple data structure. A very important one is the job queue. After each successful change created by any CurrentView, a commit job is put on the queue. In the same time, multiple jobs can arrive on the queue. Those jobs are consumed by the SyncWorker.
 
-For now, a CurrentView will just mark a file as being dirty and ready to be add to a commit, but will handle any commit creation responsability to the SyncWorker. The SyncWorker will aggregate those jobs and if no more commit jobs are being receive, for a given period of time (specified by 'merge\_timeout' at mount, with a default of 5 seconds) it will try to start the synchronization process.
+For now, a CurrentView will just mark a file as being dirty and ready to be added to a commit, but will handle any commit creation responsability to the SyncWorker. The SyncWorker will aggregate those jobs and if no more commit jobs are being receive, for a given period of time (specified by 'merge\_timeout' at mount, with a default of 5 seconds) it will try to start the synchronization process.
 
 CurrentView instances and the SyncWorker share another useful data structure, under the form of an int. It's an atomic long, with the implementation in C and with bindings in Python. This atomic long is used to keep track of how many files are still open for write or are writing. The tracking part is done by CurrentView which will increment this long each time a write operation will occur (write, chmod, chown, mkdir, rm etc.) and will decrement it when the operation was successfully finished.
 
@@ -156,7 +159,8 @@ Earlier in this paper we discussed about merging remote changes with local chang
 
 \begin{figure}[h]
   \begin{center}
-    \includegraphics[width=16cm]{layout/commits.png}
+    \def\svgwidth{\columnwidth}
+    \input{layout/commits.pdf_tex}
   \end{center}
   \caption{Diverging commits}
   \label{fig:commits}
@@ -188,7 +192,8 @@ After each merge with conflict, a new commit is created, having the same meta da
 
 \begin{figure}[h]
   \begin{center}
-    \includegraphics[width=16cm]{layout/merging-end.png}
+    \def\svgwidth{\columnwidth}
+    \input{layout/merging-end.pdf_tex}
   \end{center}
   \caption{Branch layout after merging}
   \label{fig:merging}
