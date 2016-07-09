@@ -1,0 +1,137 @@
+\newcommand{\etalchar}[1]{$^{#1}$}
+\begin{thebibliography}{FGM{\etalchar{+}}99}
+
+\bibitem[Ac15]{Aham-cumming2015}
+John G~R Aham-cumming.
+\newblock {\em {The GNU Make Book}}, volume 2015.
+\newblock 2015.
+
+\bibitem[BKEI09]{Ben-Kiki2009}
+O~Ben-Kiki, C~Evans, and B~Ingerson.
+\newblock {YAML Ain't Markup Language (YAML™) Version 1.2}.
+\newblock {\em Language}, pages 1--100, 2009.
+
+\bibitem[Com]{Commits}
+Git's chain of commits and it's branches.
+\newblock
+  \url{https://grapefruitgames.files.wordpress.com/2013/05/unitygitdiagram.png}.
+\newblock Accessed: 2016-07-07.
+
+\bibitem[Dea09]{Deacon2009}
+John Deacon.
+\newblock {Model-view-controller (mvc) architecture}.
+\newblock {\em Computer Systems Development}, pages 1--6, 2009.
+
+\bibitem[Dja]{Django}
+Django is a high-level python web framework.
+\newblock \url{https://www.djangoproject.com/}.
+\newblock Accessed: 2016-07-07.
+
+\bibitem[Dro]{Drone2016}
+{Drone CI} is a continuous delivery platform built on docker, written in go.
+
+\bibitem[ero]{erofs}
+Write permission was requested for a file on a read-only file system.
+\newblock \url{http://linux.die.net/man/2/access}.
+\newblock Accessed: 2016-07-07.
+
+\bibitem[FGM{\etalchar{+}}99]{Fielding1999}
+Roy Fielding, James Gettys, Jeff Mogul, Henrik Frystyk, Larry Masinter,
+  P.~Leach, and Tim Berners-Lee.
+\newblock {RFC2616 - Hypertext transfer protocol–HTTP/1.1}.
+\newblock {\em Internet Engineering Task Force}, pages 1--114, 1999.
+
+\bibitem[FSA]{FSA}
+High level system arhitecture.
+\newblock
+  \url{http://www.ibm.com/developerworks/library/l-linux-filesystem/figure1.gif}.
+\newblock Accessed: 2016-07-07.
+
+\bibitem[Fus]{FuseArch}
+System call flow in fuse.
+\newblock
+  \url{https://lastlog.de/misc/fuse-doc/doc/html/490px-FUSE\_structure.svg.png}.
+\newblock Accessed: 2016-07-07.
+
+\bibitem[GDM]{GDM}
+Git's data model.
+\newblock
+  \url{https://git-scm.com/book/en/v2/book/10-git-internals/images/data-model-3.png}.
+\newblock Accessed: 2016-07-07.
+
+\bibitem[GDR]{GDR}
+Github, drone relationship.
+\newblock
+  \url{http://image.slidesharecdn.com/rancherlabsoverview-aug15onlinemeetup-150814183957-lva1-app6892/95/building-a-scalable-ci-platform-using-docker-drone-and-rancher-20-638.jpg?cb=1439585795}.
+\newblock Accessed: 2016-07-07.
+
+\bibitem[GOB]{GOBJ}
+Git's internal objects.
+\newblock
+  \url{https://git-scm.com/book/en/v2/book/10-git-internals/images/data-model-2.png}.
+\newblock Accessed: 2016-07-07.
+
+\bibitem[IH14]{Inozemtseva2014}
+Laura Inozemtseva and Reid Holmes.
+\newblock {Coverage is not strongly correlated with test sute effectiness}.
+\newblock {\em Proc. ICSE}, pages 435--445, 2014.
+
+\bibitem[Lew91]{Lewine1991}
+Donald Lewine.
+\newblock {\em {POSIX Programmer's Guide}}.
+\newblock Number March 1994. 1991.
+
+\bibitem[Liba]{Libfuse2016}
+Libfuse - the reference implementation of the linux fuse (filesystem in
+  userspace) interface.
+\newblock \url{https://github.com/libfuse/libfuse}.
+\newblock Accessed: 2016-07-07.
+
+\bibitem[Libb]{Libgit2016}
+Libgit2 is a portable, pure c implementation of the git core methods.
+\newblock \url{https://libgit2.github.com/}.
+\newblock Accessed: 2016-07-07.
+
+\bibitem[lru]{lru}
+Least recently used cache overview and implementation.
+\newblock \url{http://mcicpc.cs.atu.edu/archives/2012/mcpc2012/lru/lru.html}.
+\newblock Accessed: 2016-07-07.
+
+\bibitem[Mer14]{Merkel2014}
+Dirk Merkel.
+\newblock {Docker: lightweight Linux containers for consistent development and
+  deployment}.
+\newblock {\em Linux Journal}, 2014(239):2, 2014.
+
+\bibitem[Pyg]{Pygit2016}
+Pygit2 a set of python bindings to the libgit2 shared library.
+\newblock \url{https://github.com/libgit2/pygit2}.
+\newblock Accessed: 2016-07-07.
+
+\bibitem[RG10]{Rajgarhia2010}
+Aditya Rajgarhia and Ashish Gehani.
+\newblock {Performance and extension of user space file systems}.
+\newblock {\em Proceedings of the 2010 ACM Symposium on Applied Computing SAC
+  10}, page 206, 2010.
+
+\bibitem[Ros14]{Rosen2014}
+Rami Rosen.
+\newblock {Linux Containers and the Future Cloud}.
+\newblock {\em Linux Journal}, 2014(239):Article No.2, 2014.
+
+\bibitem[Sin10]{Sinclair2010}
+Andrew Sinclair.
+\newblock {Licence Profile: Apache License, Version 2.0}.
+\newblock {\em International Free and Open Source Software Law Review},
+  2(2):107--114, 2010.
+
+\bibitem[Spi12]{Spinellis2012}
+Diomidis Spinellis.
+\newblock {Git}, 2012.
+
+\bibitem[Wor]{Wordpress}
+Wordpress - open source cms, written in php.
+\newblock \url{https://wordpress.org/about/}.
+\newblock Accessed: 2016-07-07.
+
+\end{thebibliography}

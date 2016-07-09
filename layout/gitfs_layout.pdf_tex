@@ -49,6 +49,6 @@
   \global\let\svgscale\undefined%
   \makeatother%
   \begin{picture}(1,1.11331169)%
-    \put(0,0){\includegraphics[width=\unitlength,page=1]{layout/gitfs_layout.pdf}}%
+    \put(0,0){\includegraphics[width=\textwidth,page=1]{layout/gitfs_layout.pdf}}%
   \end{picture}%
 \endgroup%

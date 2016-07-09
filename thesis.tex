@@ -1,4 +1,3 @@
-
 \documentclass[a4paper,12pt,twoside]{report}
 \usepackage[left=2.5cm,right=2.5cm,top=2.5cm,bottom=2.5cm]{geometry}
 
@@ -6,10 +5,9 @@
 \usepackage{ifplatform}
 \usepackage{svg}
 \ifxetex
-    \usepackage{fontspec} 
+    \usepackage{fontspec}
     \setmainfont{Palatino Linotype}
 \fi
-
 
 \begin{document}
 
@@ -22,15 +20,15 @@
 \submitdate{July 2016}
 \maketitle
 
+\onehalfspacing
 \preface
 \input{abstract/abstract}
-\clearpage
 \input{abstract/romana}
 \input{acknowledgements/acknowledgements}
-\onehalfspacing
-\cleardoublepage    
+\cleardoublepage
 
 \pagenumbering{arabic}
+\onehalfspacing
 \tableofcontents
 \pagestyle{uheadings}
 \newpage

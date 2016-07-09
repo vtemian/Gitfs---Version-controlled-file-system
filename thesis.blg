@@ -1,0 +1,65 @@
+This is BibTeX, Version 0.99d (TeX Live 2015/Debian)
+Capacity: max_strings=35307, hash_size=35307, hash_prime=30011
+The top-level auxiliary file: thesis.aux
+The style file: alpha.bst
+Database file #1: bibliography/bibliography.bib
+Warning--to sort, need author or key in Libgit2016
+Warning--to sort, need author or key in Pygit2016
+Warning--to sort, need author or key in Libfuse2016
+Warning--to sort, need author or key in Wordpress
+Warning--to sort, need author or key in FSA
+Warning--to sort, need author or key in FuseArch
+Warning--to sort, need author or key in Commits
+Warning--to sort, need author or key in GOBJ
+Warning--to sort, need author or key in GDM
+Warning--to sort, need author or key in Django
+Warning--to sort, need author or key in erofs
+Warning--to sort, need author or key in lru
+Warning--to sort, need author or key in Drone2016
+Warning--to sort, need author or key in GDR
+Warning--can't use both volume and number fields in Aham-cumming2015
+Warning--empty publisher in Aham-cumming2015
+Warning--there's a number but no series in Lewine1991
+Warning--empty publisher in Lewine1991
+You've used 25 entries,
+            2543 wiz_defined-function locations,
+            694 strings with 8375 characters,
+and the built_in function-call counts, 7310 in all, are:
+= -- 742
+> -- 178
+< -- 14
++ -- 53
+- -- 52
+* -- 428
+:= -- 1024
+add.period$ -- 73
+call.type$ -- 25
+change.case$ -- 119
+chr.to.int$ -- 24
+cite$ -- 57
+duplicate$ -- 330
+empty$ -- 695
+format.name$ -- 68
+if$ -- 1610
+int.to.chr$ -- 2
+int.to.str$ -- 0
+missing$ -- 12
+newline$ -- 126
+num.names$ -- 33
+pop$ -- 232
+preamble$ -- 1
+purify$ -- 146
+quote$ -- 0
+skip$ -- 261
+stack$ -- 0
+substring$ -- 351
+swap$ -- 59
+text.length$ -- 14
+text.prefix$ -- 6
+top$ -- 0
+type$ -- 192
+warning$ -- 18
+while$ -- 43
+width$ -- 31
+write$ -- 291
+(There were 18 warnings)

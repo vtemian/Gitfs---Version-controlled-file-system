@@ -7,21 +7,22 @@ In this chapter we'll get into implementation details, extending the solution de
 \section{File System layout}
 When mounting Gitfs, a bare repository and a mount point need to be specified. Gitfs will maintain a local copy of the repository by cloning it into a defined path, named as 'repo\_path'. By default, the location of this cloned repository is set to '\/var\/lib\/gitfs'. Here, Gitfs will create a new directory, obtaining its name from the path (can also be an Uniform Resource Locator - URL) to the bare repository. One can override this default behaviour and specify an absolute path in which the repository should be cloned, using '-o repo\_path=\/absolute\/path\/'. Gitfs uses the git's objects of this local repository in order to retrieve its content and manage all versioning operations. It can clone local, non-bare repositories, but it doesn't support pushing changes to them. For now, it knows to follow only one branch and if no branch is specified, when mounting, it will clone only the master branch and follow it.
 
-Once cloned, the content is retrieved from git objects, using pygit2, and presented in the mount point directory through two directories: current and history. The entire file system will have as owner and group the ones from the users which did the mount operation. This behaviour can be overridden, by specifying at mounting under what group and owner should be mounted. 
+Once cloned, the content is retrieved from git objects, using pygit2, and presented in the mount point directory through two directories: current and history. The entire file system will have as owner and group the ones from the users which did the mount operation. This behaviour can be overridden, by specifying at mounting under what group and owner should be mounted.
 
 In current directory the current state of the content is just a mirror for the cloned repository. Here, all changes will become commits in the git repository and will get synchronized with the remote. The second directory is called history, a pretty intuitive name. This directory contains $n$ other directories, one for each day in which a change was made, and those directories will contain $m$ other directories, one for each change in that day. This means that the entire number of directories in the history directory is $n*k (k \in \mathcal{N}, 0<k<m+1)$, each one of them representing a state in which the repository's content was at a certain time.
 
 \begin{figure}[h]
   \begin{center}
     \def\svgwidth{\columnwidth}
-    \input{layout/gitfs_layout.pdf_tex}
+    \includegraphics[width=.5\textwidth]{layout/layout}
+    \caption{\label{fig:gitfslayout} Gitfs directories layout}
   \end{center}
 \end{figure}
 
-The current and history directories are virtual directories which do not exists on disk. The entire set of operations which is done on the current directory is actually performed on the locally cloned repository. Also, in history directory, all those directories are not physical on the storage device. Those directories are created from git objects of local repository. Those objects are only once loaded in memory and cached, and from them, whenever one uses history directory or one of its directories, the content located in those is generated dynamically from the cached git objects.
+The current and history directories, showed in ~\ref{fig:gitfslayout}, are virtual directories which do not exists on disk. The entire set of operations which is done on the current directory is actually performed on the locally cloned repository. Also, in history directory, all those directories are not physical on the storage device. Those directories are created from git objects of local repository. Those objects are only once loaded in memory and cached, and from them, whenever one uses history directory or one of its directories, the content located in those is generated dynamically from the cached git objects.
 
 \section{Views}
-In order to better explain how Gitfs manages the content in those directories and the file system's operations, we can make a parallel example with how a HTTP service handles the requests. 
+In order to better explain how Gitfs manages the content in those directories and the file system's operations, we can make a parallel example with how a HTTP service handles the requests.
 
 The entire file system layout can be translated into URLs. Each path in the file system can be viewed as an URL, being part of an HTTP service. When a request is made on a certain URL, a handler will be trigger and a response will be returned. The request can be made with different HTTP (Hypertext Transfer Protocol) methods: GET, POST, PUT, DELETE etc \cite{Fielding1999}. For each of those methods the request handler can respond with different content. When a client requests the content from a certain URL it will use GET. When he wants to change it, it usually uses POST, but in order to differentiate the type of the change, other methods can be used (PUT, DELETE or PATCH). The request handler can act like a proxy and send it to other parts of the application. These get to do the actual work and return a response to the request handler which will return it back to the client.
 
@@ -57,7 +58,7 @@ Those views are inherited by the actual user facing views:
     \begin{itemize}
         \item CurrentView – is the view that handles the current directory. It is a PassthroughView meaning that all operations will be executed by an individual file system, without changing the outcome. This view is also responsible for managing the changes and initiate the commit process.
     \end{itemize}
-    
+
     \item ReadOnlyView
     \begin{itemize}
         \item HistoryView – view which handles the history directory and group commits by day. Also, it handles the history/{day} directories. Using the git objects from the previously cloned repository, it can retrieve commits and, using a hashmap, it will group them by day.
@@ -81,7 +82,7 @@ There is one special component which is not in figure ~\ref{fig:views_diagram}. 
 
 The Router is the entry point for our file system. When mounting the file system, fusepy will receive as an argument an Operation based class. The Operation class, from fusepy, has some methods which need to be implemented in order to associate a specific behaviour to the file system. In our case, the Route doesn't need to do that, it only needs to pretend that will implement the method, but under the hood it will use the methods from specific views.
 
-After the mounting operation is complete, FUSE kernel module, will take care of the operations. For each system call, invoked by an user space application, it will spawn a thread in which will use the object passed to it at mounting and try to call the method which implements the requested operation. Python, being a dynamic and weak typed language, we can intercept this call and inject some custom logic. 
+After the mounting operation is complete, FUSE kernel module, will take care of the operations. For each system call, invoked by an user space application, it will spawn a thread in which will use the object passed to it at mounting and try to call the method which implements the requested operation. Python, being a dynamic and weak typed language, we can intercept this call and inject some custom logic.
 
 The router receive what operation needs to execute and a path to a certain file. Based on some given regular expression, it determines which view to use. Instead of initializing a new view for each operation, a cache is used. In that cache are stored initialized views, one for each file path that was requested. The cache is implemented as an LRU cache \cite{lru} in order have a hard limit on the quantity of memory used by Gitfs. The router will search in that cache, based on a cache key composed by the path of the file, and if the path is in cache, it will return the view associated to it, otherwise it will create a new one and store it in the cache.
 
@@ -126,7 +127,7 @@ The SyncWorker will check for any running write operation, using the data struct
 If there is no any file open for write or any on going write operation, the SyncWorker will first try to make a commit. It can receive multiple jobs commits, each of which represents on successful change done by a CurrentView instance. Those jobs contains the file which was change, the path to it and the type of the change. In order to compose a meaningful message for the commit, it will try to understand the changes. If there is only one change it will create messages of form "Deleted <path to file>", "Deleted directory <path to directory>", "Created the <path to directory> directory", "Chmod to <mode> on <path to file>", "Rename <old file> to <new file>", "Create symbolic link to <link name> for <target>" and "Update <path to file>".
 
 Those kind of messages are used only when a commit is compose of only one commit jobs. Otherwise, to understand what type of change was made, is more complicated and for now it uses a message of form "Update n items", where n is the number of files or directories which were updated (created, changed or removed).
-After the commit was created, the SyncWorker will invalidate the commits cache for all views, forcing them to get newly created commit. 
+After the commit was created, the SyncWorker will invalidate the commits cache for all views, forcing them to get newly created commit.
 
 Now that the commit was created, it needed to be pushed to the remote repository as fast as possible. In order to make the process as safe as possible, the SyncWorker need to merge any existing remote changes with the local ones. In order to do that, it relies on the FetchWorker to retrieve remote changes. In the beginning of the process, the SyncWorker will set a lock on all FUSE threads in order to delay any write operation. In this way, the merge process is safe, insuring a clean staging area. Usually, the delay is not very much, depending on what kind of changes the SyncWorker needs to sync, being almost unnoticeable by the normal user (around 1-2 seconds), using a relatively small dataset of changes (<= 50 MB). Also, all fetches are stopped in order to avoid merging and race condition errors.
 
@@ -170,7 +171,7 @@ Earlier in this paper we discussed about merging remote changes with local chang
 
 We will use the situation represented in ~\ref{fig:commits} as an example for this strategy. In figure ~\ref{fig:commits} there are two branches represented, called remote and local, which have a common branch. On that common branch, commits 1, 2 and 3 will be present on local and remote branch. From commit 3, those branches start diverging. On branch remote commits 4, 5, 6 are created and on local, commits 7 and 8.
 
-The plan is to apply local changes over the remote ones, obtaining a nice chain of commits: 1, 2, 3, 4, 5, 6, 7' and 8'. In order to obtain that we need to know which was the diverging commit or the common parent. 
+The plan is to apply local changes over the remote ones, obtaining a nice chain of commits: 1, 2, 3, 4, 5, 6, 7' and 8'. In order to obtain that we need to know which was the diverging commit or the common parent.
 
 For that we'll use very simple algorithm and two sets, one for each branch. We'll start from the end and the last commits of those branches. Each retrieved commit will be put in the corresponding set, but first we'll do a cross checking. We'll check to see if the commit from the first branch is already in the set of commits for the second branch. The same will be done for the commit of the second branch. If we find any commit in other branches lists, then we can stop, we found the parent.
 
@@ -179,7 +180,7 @@ Only 6 is present so we'll add 8 in the set of local's visited commits. We'll co
 
 This algorithm is a very simple one, in which we rely on the set data structure which offers us an $O(1)$ lookup complexity. Worst case time complexity, for this algorithm, is $O(n)$, where $n$ represents the number of commits in a branch. In normal usage parameters, the number of diverging commits is very small, around 10-20.
 
-Now that we found the last common commit, we'll rename the branches in merging\_remote and merging\_local in order to avoid braking up the local repository. We switch to merging\_remote and use this branch as the active, working one. From merging\_local we'll take the commits proceeding the common one and we'll try to merge them on top of merging\_remote. 
+Now that we found the last common commit, we'll rename the branches in merging\_remote and merging\_local in order to avoid braking up the local repository. We switch to merging\_remote and use this branch as the active, working one. From merging\_local we'll take the commits proceeding the common one and we'll try to merge them on top of merging\_remote.
 
 If one want to use another strategy, it needs to implement it by creating a class which inherits from the base strategy (which is locate in the mergers module) and has a method called merge. That method will be called with a reference to the local branch, on to the remote branch and a reference to the remote repository. After the code base is merged and a new build is released, the newly created strategy can be used. We'll be using Libgit2 for merging, which will try to merge the commits by using a 3 way merge strategy. If it fails, we'll need to handle it manually.
 
@@ -219,7 +220,7 @@ In figure ~\ref{fig:pipeline} the entire development pipeline is described.
 
 \begin{figure}[h]
   \begin{center}
-    \includegraphics[width=16cm]{layout/drone.png}
+    \includegraphics[width=\textwidth]{layout/drone.png}
   \end{center}
   \caption{Gitfs development pipeline \cite{GDR}}
   \label{fig:pipeline}
@@ -249,7 +250,7 @@ In chapters above we also presented different configurable options. Gitfs has mo
     \item log: the path of the log file. Special name syslog will log to the system logger (default: syslog)
     \item log\_level: the logging level. One of error, warning, info, debug (default: warning)
     \item debug: he switch that sets the log level to debug and also enables FUSE’s debug (default: false)
-    \item username: the username for HTTP basic auth 
+    \item username: the username for HTTP basic auth
     \item password: the password for HTTP basic auth
     \item key: the path of the SSH private key. NOTE: the public key is constructed by appending .pub to this path and the file MUST exist (default: \textdollar HOME/.ssh/id\_rsa)
 \end{itemize}

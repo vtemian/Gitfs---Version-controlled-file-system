@@ -49,6 +49,6 @@
   \global\let\svgscale\undefined%
   \makeatother%
   \begin{picture}(1,0.5625)%
-    \put(0,0){\includegraphics[width=15cm,page=1]{layout/views.pdf}}%
+    \put(0,0){\includegraphics[width=\textwidth,page=1]{layout/views.pdf}}%
   \end{picture}%
 \endgroup%

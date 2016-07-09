@@ -49,6 +49,6 @@
   \global\let\svgscale\undefined%
   \makeatother%
   \begin{picture}(1,0.27330922)%
-    \put(0,0){\includegraphics[width=15cm,page=1]{layout/merging-end.pdf}}%
+    \put(0,0){\includegraphics[width=\textwidth,page=1]{layout/merging-end.pdf}}%
   \end{picture}%
 \endgroup%

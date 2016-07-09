@@ -49,6 +49,6 @@
   \global\let\svgscale\undefined%
   \makeatother%
   \begin{picture}(1,0.5625)%
-    \put(0,0){\includegraphics[width=15cm]{layout/router.pdf}}%
+    \put(0,0){\includegraphics[width=\textwidth]{layout/router.pdf}}%
   \end{picture}%
 \endgroup%
