@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.14159265-2.6-0.99992 (TeX Live 2015/Debian) (preloaded format=xelatex 2016.7.7)  8 JUL 2016 12:59
+This is XeTeX, Version 3.14159265-2.6-0.99992 (TeX Live 2015/Debian) (preloaded format=xelatex 2016.7.7)  10 JUL 2016 22:54
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -858,20 +858,44 @@ Chapter 2.
 
 ]
 File: theoretical/filesystem-arhitecture.png Graphic file (type QTm)
- <use  "theoretical/filesystem-arhitecture.png" > [8] [9]
+ <use  "theoretical/filesystem-arhitecture.png" > [8]
 File: theoretical/fuse.png Graphic file (type QTm)
 
-<use  "theoretical/fuse.png" > [10] [11] [12]
-File: theoretical/git_flow.png Graphic file (type QTm)
+<use  "theoretical/fuse.png" >
 
-<use  "theoretical/git_flow.png" > [13] [14]
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+[9] [10] [11]
+File: theoretical/git_flow.png Graphic file (type QTm)
+ <use  "theoretical/git_flow.png" >
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+[12]
+Underfull \vbox (badness 1400) has occurred while \output is active []
+
+ [13]
 File: theoretical/data-model-2.png Graphic file (type QTm)
 
-<use  "theoretical/data-model-2.png" > [15]
-File: theoretical/data-model-3.png Graphic file (type QTm)
+<use  "theoretical/data-model-2.png" >
 
-<use  "theoretical/data-model-3.png" > [16] [17] [18] [19] [20])
-(./layout/layout.tex [21]
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+[14]
+File: theoretical/data-model-3.png Graphic file (type QTm)
+ <use  "theoretical/data-model-3.png" >
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+ [15]
+[16]
+
+LaTeX Warning: Citation `PEP8' on page 17 undefined on input line 145.
+
+[17] [18] [19] [20]) (./layout/layout.tex [21]
 Chapter 3.
 [22
 
@@ -990,13 +1014,17 @@ Package atveryend Info: Empty hook `AfterLastShipout' on input line 50.
  (./thesis.aux)
 Package atveryend Info: Empty hook `AtVeryEndDocument' on input line 50.
 Package atveryend Info: Empty hook `AtEndAfterFileList' on input line 50.
+
+
+LaTeX Warning: There were undefined references.
+
 Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 50.
  ) 
 Here is how much of TeX's memory you used:
- 24157 strings out of 495579
- 428623 string characters out of 6187323
+ 24158 strings out of 495579
+ 428629 string characters out of 6187323
  455615 words of memory out of 5000000
- 27167 multiletter control sequences out of 15000+600000
+ 27168 multiletter control sequences out of 15000+600000
  7270 words of font info for 54 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
  68i,10n,98p,10377b,445s stack positions out of 5000i,500n,10000p,200000b,80000s

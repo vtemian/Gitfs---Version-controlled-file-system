@@ -3,6 +3,7 @@ Capacity: max_strings=35307, hash_size=35307, hash_prime=30011
 The top-level auxiliary file: thesis.aux
 The style file: alpha.bst
 Database file #1: bibliography/bibliography.bib
+Warning--I didn't find a database entry for "PEP8"
 Warning--to sort, need author or key in Libgit2016
 Warning--to sort, need author or key in Pygit2016
 Warning--to sort, need author or key in Libfuse2016
@@ -23,7 +24,7 @@ Warning--there's a number but no series in Lewine1991
 Warning--empty publisher in Lewine1991
 You've used 25 entries,
             2543 wiz_defined-function locations,
-            694 strings with 8375 characters,
+            696 strings with 8383 characters,
 and the built_in function-call counts, 7310 in all, are:
 = -- 742
 > -- 178
@@ -62,4 +63,4 @@ warning$ -- 18
 while$ -- 43
 width$ -- 31
 write$ -- 291
-(There were 18 warnings)
+(There were 19 warnings)
